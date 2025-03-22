@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/providers/theme-provider";
+import QueryProvider from "@/providers/query-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const font = Manrope({
   subsets: ["latin"],
@@ -21,7 +24,17 @@ export default function RootLayout({
       <body
         className={`${font.className} antialiased`}
       >
-        {children}
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
