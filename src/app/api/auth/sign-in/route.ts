@@ -28,7 +28,15 @@ export async function POST(request: NextRequest) {
         }
 
         // Return the successful response from your backend
-        return NextResponse.json(data);
+        const clientResponse = NextResponse.json(data);
+        
+        // Forward the auth cookie from the backend
+        const authCookie = response.headers.get('set-cookie');
+        if (authCookie) {
+            clientResponse.headers.set('set-cookie', authCookie);
+        }
+
+        return clientResponse;
     } catch (error) {
         console.error("Sign in error:", error);
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });

@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
         // Forward the request to your backend
         const response = await fetch(`${BACKEND_API_URL}/auth/sign-up`, {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
 
         // Get the response data
         const data = await response.json();
-
+        
         // If the backend response wasn't successful, forward the error
         if (!response.ok) {
             return NextResponse.json(
@@ -28,7 +29,15 @@ export async function POST(request: NextRequest) {
         }
 
         // Return the successful response from your backend
-        return NextResponse.json(data);
+        const clientResponse = NextResponse.json(data);
+        
+        // Forward the auth cookie from the backend
+        const authCookie = response.headers.get('set-cookie');
+        if (authCookie) {
+            clientResponse.headers.set('set-cookie', authCookie);
+        }
+
+        return clientResponse;
     } catch (error) {
         console.error("Sign up error:", error);
         return NextResponse.json(
