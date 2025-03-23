@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { signUpFormSchema } from "@/lib/schema/auth";
 import { useMutation } from "@tanstack/react-query";
+import { signUp } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type SignUpFormValues = z.infer<typeof signUpFormSchema>;
 
@@ -26,13 +29,21 @@ export function SignUpForm() {
             confirmPassword: "",
         },
     });
+    const router = useRouter();
 
     const { mutateAsync, isPending } = useMutation({
-        mutationFn: () => {}
+        mutationFn: signUp
     });
 
     function onSubmit(data: SignUpFormValues) {
-
+        mutateAsync(data, {
+            // onSuccess: () => {
+            //     router.push("/dashboard");
+            // },
+            onError: (error) => {
+                toast.error(error.message)
+            }
+        });
     }
 
     return (

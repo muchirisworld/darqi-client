@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { signInFormSchema } from "@/lib/schema/auth";
 import { useMutation } from "@tanstack/react-query";
+import { signIn } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type SignInFormValues = z.infer<typeof signInFormSchema>;
 export function SignInForm() {
@@ -21,13 +24,21 @@ export function SignInForm() {
             password: "",
         },
     });
+    const router = useRouter();
 
     const { mutateAsync, isPending } = useMutation({
-        mutationFn: () => {}
+        mutationFn: signIn
     });
 
     function onSubmit(data: SignInFormValues) {
-
+        mutateAsync(data, {
+            onSuccess: () => {
+                router.push("/");
+            },
+            onError: (error) => {
+                toast.error(error.message)
+            }
+        })
     };
 
     return (
