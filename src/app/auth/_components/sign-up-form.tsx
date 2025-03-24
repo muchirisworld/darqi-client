@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Link from "next/link"
 import { Github } from "lucide-react";
 
@@ -11,10 +10,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { signUpFormSchema, SignUpFormValues } from "@/lib/schema/auth";
-import { useMutation } from "@tanstack/react-query";
-import { signUp } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/store/use-auth";
 
 export function SignUpForm() {
     const form = useForm<SignUpFormValues>({
@@ -27,21 +25,17 @@ export function SignUpForm() {
             confirmPassword: "",
         },
     });
+    const { signUp, isPending } = useAuth();
     const router = useRouter();
 
-    const { mutateAsync, isPending } = useMutation({
-        mutationFn: signUp
-    });
-
     function onSubmit(data: SignUpFormValues) {
-        mutateAsync(data, {
-            // onSuccess: () => {
-            //     router.push("/dashboard");
-            // },
-            onError: (error) => {
+        signUp(data)
+            .then(() => {
+                router.push("/");
+            })
+            .catch((error) => {
                 toast.error(error.message)
-            }
-        });
+            })
     }
 
     return (

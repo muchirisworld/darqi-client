@@ -1,7 +1,6 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Link from "next/link";
 import { Github } from "lucide-react";
 
@@ -10,10 +9,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { signInFormSchema, SignInFormValues } from "@/lib/schema/auth";
-import { useMutation } from "@tanstack/react-query";
-import { signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useAuth } from "@/store/use-auth";
 
 export function SignInForm() {
     const form = useForm<SignInFormValues>({
@@ -23,21 +21,17 @@ export function SignInForm() {
             password: "",
         },
     });
+    const { isPending, signIn } = useAuth();
     const router = useRouter();
 
-    const { mutateAsync, isPending } = useMutation({
-        mutationFn: signIn
-    });
-
     function onSubmit(data: SignInFormValues) {
-        mutateAsync(data, {
-            onSuccess: () => {
+        signIn(data)
+            .then(() => {
                 router.push("/");
-            },
-            onError: (error) => {
+            })
+            .catch((error) => {
                 toast.error(error.message)
-            }
-        })
+            })
     };
 
     return (
