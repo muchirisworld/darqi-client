@@ -10,13 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { signUpFormSchema } from "@/lib/schema/auth";
+import { signUpFormSchema, SignUpFormValues } from "@/lib/schema/auth";
 import { useMutation } from "@tanstack/react-query";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-type SignUpFormValues = z.infer<typeof signUpFormSchema>;
 
 export function SignUpForm() {
     const form = useForm<SignUpFormValues>({

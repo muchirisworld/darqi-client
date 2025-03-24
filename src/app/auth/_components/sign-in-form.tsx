@@ -9,13 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { signInFormSchema } from "@/lib/schema/auth";
+import { signInFormSchema, SignInFormValues } from "@/lib/schema/auth";
 import { useMutation } from "@tanstack/react-query";
 import { signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-type SignInFormValues = z.infer<typeof signInFormSchema>;
 export function SignInForm() {
     const form = useForm<SignInFormValues>({
         resolver: zodResolver(signInFormSchema),
