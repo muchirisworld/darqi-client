@@ -3,4 +3,5 @@ type User = {
     email: string;
     firstName: string;
     lastName: string;
+    imageUrl?: string;
 };
