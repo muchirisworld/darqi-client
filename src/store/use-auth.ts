@@ -26,7 +26,7 @@ export const useAuth = create<UseAuthProps>((set) => ({
               throw new Error(responseData.message || "Failed to sign in");
             }
           
-            set({ user: responseData.user });
+            set({ user: responseData });
         } catch (error: any) {
             throw error;
         }
@@ -47,7 +47,7 @@ export const useAuth = create<UseAuthProps>((set) => ({
               throw new Error(responseData.message || "Failed to sign up");
             }
           
-            set({ user: responseData.user });
+            set({ user: responseData });
         } catch (error: any) {
             throw error;
         }
