@@ -12,6 +12,7 @@ import { signInFormSchema, SignInFormValues } from "@/lib/schema/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/store/use-auth";
+import { useMutation } from "@tanstack/react-query";
 
 export function SignInForm() {
     const form = useForm<SignInFormValues>({
@@ -21,17 +22,22 @@ export function SignInForm() {
             password: "",
         },
     });
-    const { isPending, signIn } = useAuth();
+    const { signIn } = useAuth();
+    const { mutateAsync, isPending } = useMutation({
+        mutationFn: signIn
+    });
+
     const router = useRouter();
 
     function onSubmit(data: SignInFormValues) {
-        signIn(data)
-            .then(() => {
+        mutateAsync(data, {
+            onSuccess: () => {
                 router.push("/");
-            })
-            .catch((error) => {
+            },
+            onError: (error) => {
                 toast.error(error.message)
-            })
+            }
+        })
     };
 
     return (

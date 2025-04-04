@@ -3,8 +3,6 @@ import { create } from "zustand";
 
 type UseAuthProps = {
     user: User | null;
-    error: string | null;
-    isPending: boolean;
     signIn: (data: SignInFormValues) => Promise<void>;
     signUp: (data: SignUpFormValues) => Promise<void>;
     signOut: () => Promise<void>;
@@ -12,12 +10,8 @@ type UseAuthProps = {
 
 export const useAuth = create<UseAuthProps>((set) => ({
     user: null,
-    isPending: false,
-    error: null,
     signIn: async (data) => {
         try {
-            set({ isPending: true, error: null });
-
             const response = await fetch("/api/auth/sign-in", {
                 method: "POST",
                 headers: {
@@ -32,16 +26,13 @@ export const useAuth = create<UseAuthProps>((set) => ({
               throw new Error(responseData.message || "Failed to sign in");
             }
           
-            set({ user: responseData.user, isPending: false });
+            set({ user: responseData.user });
         } catch (error: any) {
-            set({ error: error.message, isPending: false });
             throw error;
         }
     },
     signUp: async (data) => {
         try {
-            set({ isPending: true, error: null });
-
             const response = await fetch("/api/auth/sign-up", {
                 method: "POST",
                 headers: {
@@ -56,16 +47,13 @@ export const useAuth = create<UseAuthProps>((set) => ({
               throw new Error(responseData.message || "Failed to sign up");
             }
           
-            set({ user: responseData.user, isPending: false });
+            set({ user: responseData.user });
         } catch (error: any) {
-            set({ error: error.message, isPending: false });
             throw error;
         }
     },
     signOut: async () => {
         try {
-            set({ isPending: true, error: null });
-
             const response = await fetch("/api/auth/sign-out", {
                 method: "POST"
             });
@@ -74,9 +62,8 @@ export const useAuth = create<UseAuthProps>((set) => ({
               throw new Error("Failed to sign out");
             }
           
-            set({ user: null, isPending: false });
+            set({ user: null });
         } catch (error: any) {
-            set({ error: error.message, isPending: false });
             throw error;
         }
     },

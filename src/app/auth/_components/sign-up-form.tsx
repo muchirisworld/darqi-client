@@ -13,6 +13,7 @@ import { signUpFormSchema, SignUpFormValues } from "@/lib/schema/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/store/use-auth";
+import { useMutation } from "@tanstack/react-query";
 
 export function SignUpForm() {
     const form = useForm<SignUpFormValues>({
@@ -25,17 +26,22 @@ export function SignUpForm() {
             confirmPassword: "",
         },
     });
-    const { signUp, isPending } = useAuth();
+    const { signUp } = useAuth();
+    const { mutateAsync, isPending } = useMutation({
+        mutationFn: signUp
+    });
+
     const router = useRouter();
 
     function onSubmit(data: SignUpFormValues) {
-        signUp(data)
-            .then(() => {
+        mutateAsync(data, {
+            onSuccess: () => {
                 router.push("/");
-            })
-            .catch((error) => {
+            },
+            onError: (error) => {
                 toast.error(error.message)
-            })
+            }
+        })
     }
 
     return (
