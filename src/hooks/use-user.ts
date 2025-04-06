@@ -9,13 +9,10 @@ export function useUser() {
     const { data: user, isLoading } = useQuery({
         queryKey: ['user'],
         queryFn: async () => {
-            console.log("Fetching user")
-
             const response = await fetch('/api/auth/me');
             const data = await response.json();
 
             if (!response.ok) {
-            console.log("Response not okay")
                 setAuthenticated(false);
                 throw new Error(data.message || 'Failed to fetch user');
             }
@@ -77,7 +74,7 @@ export function useUser() {
             const response = await fetch('/api/auth/sign-out', {
                 method: 'POST'
             });
-            
+
             if (!response.ok) {
                 throw new Error('Failed to sign out');
             }
