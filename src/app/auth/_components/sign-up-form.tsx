@@ -12,8 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { signUpFormSchema, SignUpFormValues } from "@/lib/schema/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/store/use-auth";
-import { useMutation } from "@tanstack/react-query";
+import { useUser } from "@/hooks/use-user";
 
 export function SignUpForm() {
     const form = useForm<SignUpFormValues>({
@@ -26,15 +25,12 @@ export function SignUpForm() {
             confirmPassword: "",
         },
     });
-    const { signUp } = useAuth();
-    const { mutateAsync, isPending } = useMutation({
-        mutationFn: signUp
-    });
+    const { signUp } = useUser();
 
     const router = useRouter();
 
     function onSubmit(data: SignUpFormValues) {
-        mutateAsync(data, {
+        signUp.mutate(data, {
             onSuccess: () => {
                 router.push("/");
             },
@@ -115,8 +111,8 @@ export function SignUpForm() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" className="w-full" disabled={isPending}>
-                        {isPending ? "Creating account..." : "Create Account"}
+                    <Button type="submit" className="w-full" disabled={signUp.isPending}>
+                        {signUp.isPending ? "Creating account..." : "Create Account"}
                     </Button>
                 </form>
             </Form>
@@ -131,7 +127,7 @@ export function SignUpForm() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" type="button" disabled={isPending}>
+                <Button variant="outline" type="button" disabled={signUp.isPending}>
                     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                         <path
                             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -153,7 +149,7 @@ export function SignUpForm() {
                     </svg>
                     Google
                 </Button>
-                <Button variant="outline" type="button" disabled={isPending}>
+                <Button variant="outline" type="button" disabled={signUp.isPending}>
                     <Github className="mr-2 h-4 w-4" />
                     GitHub
                 </Button>

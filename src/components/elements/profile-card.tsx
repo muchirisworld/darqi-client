@@ -10,13 +10,13 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import AvatarButton from './avatar-button';
-import { useAuth } from '@/store/use-auth';
 import Link from 'next/link';
 import { PersonIcon, GearIcon, ExitIcon } from '@radix-ui/react-icons';
 import useConfirm from '@/hooks/use-confirm';
+import { useUser } from '@/hooks/use-user';
 
 const ProfileCard = () => {
-    const { user, signOut } = useAuth((state) => state);
+    const { user, signOut } = useUser();
     const [ConfirmDialog, confirm] = useConfirm({
         title: "Are you sure?",
         message: "You will be signed out of your account when this action is completed"
@@ -25,7 +25,7 @@ const ProfileCard = () => {
     const handleSignOut = async () => {
         const ok = await confirm();
         if (!ok) return;
-        signOut();
+        signOut.mutate();
     }
 
   return (
