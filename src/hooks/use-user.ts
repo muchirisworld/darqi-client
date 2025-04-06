@@ -16,7 +16,6 @@ export function useUser() {
                 setAuthenticated(false);
                 throw new Error(data.message || 'Failed to fetch user');
             }
-            console.log("Response ok", data)
 
             if (data) setAuthenticated(true);
             return data;
