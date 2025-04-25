@@ -18,7 +18,7 @@ export function useUser() {
             }
 
             if (data) setAuthenticated(true);
-            return data;
+            return data as User;
         },
         // Only fetch if we think we're authenticated
         enabled: isAuthenticated,
