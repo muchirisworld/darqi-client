@@ -9,19 +9,19 @@ import {
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
-import { MoreVerticalIcon, LogOutIcon } from 'lucide-react';
+import { MoreVerticalIcon } from 'lucide-react';
 import { ExitIcon, GearIcon } from "@radix-ui/react-icons";
-import { CreditCardIcon, UserCircleIcon, BellIcon } from "@heroicons/react/24/outline";
+import { CreditCardIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { useUser } from '@/hooks/use-user';
 import Link from 'next/link';
 import useConfirm from '@/hooks/use-confirm';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const UserButton = () => {
     const { user, signOut } = useUser();
@@ -30,8 +30,6 @@ const UserButton = () => {
         title: "Are you sure?",
         message: "You will be signed out of your account when this action is completed"
     });
-
-    const userFallback = user?.firstName.charAt(0)! + user?.lastName!.charAt(0);
     
     const handleSignOut = async () => {
         const ok = await confirm();
@@ -49,16 +47,7 @@ const UserButton = () => {
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-                <Avatar className="h-8 w-8 rounded-lg grayscale">
-                    <AvatarImage src={user?.imageUrl} alt={`${user?.firstName} ${user?.lastName}`} />
-                    <AvatarFallback className="rounded-lg">{userFallback}</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{`${user?.firstName} ${user?.lastName}`}</span>
-                    <span className="truncate text-xs text-muted-foreground">
-                        {user?.email}
-                    </span>
-                </div>
+                {user ? <AvatarButton user={user} /> : <UserSkeleton />}
                 <MoreVerticalIcon className="ml-auto size-4" />
             </SidebarMenuButton>
         </DropdownMenuTrigger>
@@ -70,16 +59,7 @@ const UserButton = () => {
         >
             <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage src={user?.imageUrl} alt={`${user?.firstName} ${user?.lastName}`} />
-                        <AvatarFallback className="rounded-lg">{userFallback}</AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-medium">{`${user?.firstName} ${user?.lastName}`}</span>
-                        <span className="truncate text-xs text-muted-foreground">
-                            {user?.email}
-                        </span>
-                    </div>
+                    {user ? <AvatarButton user={user} /> : <UserSkeleton />}
                 </div>
             </DropdownMenuLabel>
 
@@ -120,3 +100,35 @@ const UserButton = () => {
 }
 
 export default UserButton;
+
+
+const AvatarButton = ({ user }: { user: User | undefined }) => {
+    const userFallback = user?.firstName.charAt(0)! + user?.lastName!.charAt(0);
+
+  return (
+    <>
+        <Avatar className="h-8 w-8 rounded-lg grayscale">
+            <AvatarImage src={user?.imageUrl} alt={`${user?.firstName} ${user?.lastName}`} />
+            <AvatarFallback className="rounded-lg">{userFallback}</AvatarFallback>
+        </Avatar>
+        <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-medium">{`${user?.firstName} ${user?.lastName}`}</span>
+            <span className="truncate text-xs text-muted-foreground">
+                {user?.email}
+            </span>
+        </div>
+    </>
+  )
+}
+
+const UserSkeleton = () => {
+  return (    
+    <div className="flex items-center space-x-2">
+        <Skeleton className="h-8 w-8" />
+        <div className="space-y-1">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-2 w-[200px]" />
+        </div>
+    </div>
+  )
+}
